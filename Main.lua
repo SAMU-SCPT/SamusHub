@@ -98,42 +98,16 @@ Interface:CreateButton("Teleport Ilha 2", TeleportTab, function()
 	print("Teleportando para Ilha 2")
 end)
 
-Interface:CreateButton("Comprar Armas", ShopTab, function()
-	print("Comprando armas")
+Interface:CreateButton("Comprar Arma", ShopTab, function()
+	print("Comprando arma")
 end)
 
-Interface:CreateButton("Comprar Estilo de Luta", ShopTab, function()
-	print("Comprando estilo de luta")
+Interface:CreateButton("Comprar Upgrade", ShopTab, function()
+	print("Comprando upgrade")
 end)
 
-Interface:CreateButton("Comprar Fruta (Normal)", ShopTab, function()
-	print("Comprando fruta normal")
+Interface:CreateButton("Exibir Stats", StatsTab, function()
+	print("Mostrando stats")
 end)
 
-Interface:CreateButton("Comprar Fruta (Avançada)", ShopTab, function()
-	print("Comprando fruta avançada")
-end)
-
-Interface:CreateButton("Auto Status - Fruta", StatsTab, function()
-	print("Auto status em fruta")
-end)
-
-Interface:CreateButton("Auto Status - Espada", StatsTab, function()
-	print("Auto status em espada")
-end)
-
-Interface:CreateButton("Auto Status - Arma", StatsTab, function()
-	print("Auto status em arma")
-end)
-
-Interface:CreateButton("Auto Status - Defesa", StatsTab, function()
-	print("Auto status em defesa")
-end)
-
-Interface:CreateButton("Auto Status - Soco", StatsTab, function()
-	print("Auto status em soco")
-end)
-
-Interface:CreateButton("Auto Status - Balanceado", StatsTab, function()
-	print("Distribuindo status igualmente")
-end)
+AutoFarmTab.Visible = true
