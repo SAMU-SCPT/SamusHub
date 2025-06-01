@@ -41,4 +41,4 @@ Interface:CreateButton("Pegar frutas soltas", fruitTab, togglePickFruits)
 Interface:CreateButton("Comer frutas automaticamente", fruitTab, toggleAutoEat)
 Interface:CreateButton("Dropar frutas automaticamente", fruitTab, toggleAutoDrop)
 
-print("Interface carregada, pronto para rodar as funções básicas.")
+print("Interface carregada.")
