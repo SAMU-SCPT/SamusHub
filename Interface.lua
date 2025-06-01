@@ -1,7 +1,6 @@
 local Interface = {}
 
 local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
@@ -16,7 +15,7 @@ floatButton.Parent = gui
 floatButton.Size = UDim2.new(0, 50, 0, 50)
 floatButton.Position = UDim2.new(0, 20, 0.5, -25)
 floatButton.BackgroundTransparency = 1
-floatButton.Image = "rbxassetid://128226597224894"
+floatButton.Image = "rbxassetid://128226597224894" -- seu ícone
 
 local dragging = false
 local dragInput, dragStart, startPos
@@ -109,6 +108,7 @@ content.Position = UDim2.new(0, 0, 0, 30)
 content.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 
 local tabs = {}
+
 function Interface:AddTab(name)
 	local tab = Instance.new("Frame")
 	tab.Name = name
