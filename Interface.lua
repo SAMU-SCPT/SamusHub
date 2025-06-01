@@ -219,4 +219,30 @@ function library:CreateWindow(title)
             end)
         end
     end)
-  
+
+    floatingBtn.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
+        end
+    end)
+
+    floatingBtn.MouseButton1Click:Connect(function()
+        screenGui.Enabled = not screenGui.Enabled
+    end)
+
+    local win = {}
+
+    win.ScreenGui = screenGui
+    win.MainFrame = mainFrame
+    win.AddTab = addTab
+
+    return win
+end
+
+return library
