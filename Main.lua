@@ -1,4 +1,4 @@
-local Interface = loadstring(game:HttpGet("https://raw.githubusercontent.com/SAMU-SCPT/SamusHub/main/Interface.lua"))()
+local Interface = loadstring(game:HttpGet("https://raw.githubusercontent.com/SAMU-SCPT/SamusHub/refs/heads/main/Interface.lua"))()
 
 local Window = Interface:CreateWindow("SAMU HUB")
 
