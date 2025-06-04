@@ -25,7 +25,7 @@ FloatButton.BorderColor3 = AccentColor
 FloatButton.BorderSizePixel = 2
 FloatButton.Position = UDim2.new(0.9, -30, 0.5, -30)
 FloatButton.Size = UDim2.new(0, 60, 0, 60)
-FloatButton.Image = "rbxassetid://128226597224894"
+FloatButton.Image = "rbxassetid://130819294675841"
 FloatButton.ScaleType = Enum.ScaleType.Fit
 
 -- Canto arredondado no botão
