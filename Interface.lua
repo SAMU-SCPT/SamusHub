@@ -1,233 +1,162 @@
--- // Criado por SAMU HUB // --
-local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
+local Player = game:GetService("Players").LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local GuiService = game:GetService("GuiService")
 
--- Criar GUI principal
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "SAMU_HUB_UI"
-ScreenGui.Parent = game.CoreGui
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+local screenGui = Instance.new("ScreenGui", game.CoreGui)
+screenGui.Name = "SAMU_HUB_UI"
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Cores principais
-local MainColor = Color3.fromRGB(20, 20, 20)
-local AccentColor = Color3.fromRGB(200, 0, 0)
-local TextColor = Color3.fromRGB(255, 255, 255)
-local BackgroundColor = Color3.fromRGB(30, 30, 30)
+-- Botão flutuante
+local floatButton = Instance.new("ImageButton")
+floatButton.Name = "SAMU_FloatButton"
+floatButton.Size = UDim2.new(0, 60, 0, 60)
+floatButton.Position = UDim2.new(0.85, 0, 0.5, 0)
+floatButton.BackgroundTransparency = 1
+floatButton.Image = "rbxassetid://128226597224894"
+floatButton.Parent = screenGui
+floatButton.AnchorPoint = Vector2.new(0.5, 0.5)
 
-------------------------------------
--- BOTÃO FLUTUANTE ----------------
-------------------------------------
-local FloatButton = Instance.new("ImageButton")
-FloatButton.Name = "FloatButton"
-FloatButton.Parent = ScreenGui
-FloatButton.BackgroundColor3 = MainColor
-FloatButton.BorderColor3 = AccentColor
-FloatButton.BorderSizePixel = 2
-FloatButton.Position = UDim2.new(0.9, -30, 0.5, -30)
-FloatButton.Size = UDim2.new(0, 60, 0, 60)
-FloatButton.Image = "rbxassetid://130819294675841"
-FloatButton.ScaleType = Enum.ScaleType.Fit
+-- Drag do botão
+local dragging, dragInput, dragStart, startPos
 
--- Canto arredondado no botão
-local FloatCorner = Instance.new("UICorner", FloatButton)
-FloatCorner.CornerRadius = UDim.new(1, 0)
+floatButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = floatButton.Position
 
-------------------------------------
--- JANELA PRINCIPAL ----------------
-------------------------------------
-local MainFrame = Instance.new("Frame")
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = MainColor
-MainFrame.BorderColor3 = AccentColor
-MainFrame.BorderSizePixel = 3
-MainFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
-MainFrame.Size = UDim2.new(0, 550, 0, 400)
-MainFrame.Visible = false
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
 
-local MainCorner = Instance.new("UICorner", MainFrame)
-MainCorner.CornerRadius = UDim.new(0, 10)
+floatButton.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
 
--- Top Bar
-local TopBar = Instance.new("Frame")
-TopBar.Parent = MainFrame
-TopBar.BackgroundColor3 = BackgroundColor
-TopBar.BorderSizePixel = 0
-TopBar.Size = UDim2.new(1, 0, 0, 40)
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        floatButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
 
-local TopCorner = Instance.new("UICorner", TopBar)
-TopCorner.CornerRadius = UDim.new(0, 10)
+-- Janela principal
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 500, 0, 320)
+mainFrame.Position = UDim2.new(0.5, -250, 0.5, -160)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = false
+mainFrame.Parent = screenGui
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+mainFrame.ClipsDescendants = true
 
--- Título
-local Title = Instance.new("TextLabel")
-Title.Parent = TopBar
-Title.BackgroundTransparency = 1
-Title.Size = UDim2.new(1, -80, 1, 0)
-Title.Position = UDim2.new(0, 10, 0, 0)
-Title.Text = "SAMU HUB"
-Title.Font = Enum.Font.GothamBold
-Title.TextColor3 = TextColor
-Title.TextSize = 20
-Title.TextXAlignment = Enum.TextXAlignment.Left
+-- Sombra
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "Shadow"
+shadow.Size = mainFrame.Size + UDim2.new(0, 10, 0, 10)
+shadow.Position = mainFrame.Position + UDim2.new(0, 5, 0, 5)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageTransparency = 0.5
+shadow.ZIndex = 0
+shadow.Parent = screenGui
+shadow.Visible = false
 
--- Botão minimizar
-local MinButton = Instance.new("TextButton")
-MinButton.Parent = TopBar
-MinButton.BackgroundColor3 = AccentColor
-MinButton.Size = UDim2.new(0, 30, 0, 30)
-MinButton.Position = UDim2.new(1, -70, 0.5, -15)
-MinButton.Text = "-"
-MinButton.Font = Enum.Font.GothamBold
-MinButton.TextColor3 = TextColor
-MinButton.TextSize = 20
+-- Header (barra superior)
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1, 0, 0, 35)
+header.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+header.Parent = mainFrame
 
-local MinCorner = Instance.new("UICorner", MinButton)
-MinCorner.CornerRadius = UDim.new(1, 0)
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -70, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.Text = "SAMU HUB 5.0\nby: SAMU"
+title.TextColor3 = Color3.fromRGB(255, 50, 50)
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextYAlignment = Enum.TextYAlignment.Center
+title.TextSize = 16
+title.Font = Enum.Font.GothamBold
+title.BackgroundTransparency = 1
+title.Parent = header
 
--- Botão fechar
-local CloseButton = Instance.new("TextButton")
-CloseButton.Parent = TopBar
-CloseButton.BackgroundColor3 = AccentColor
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -35, 0.5, -15)
-CloseButton.Text = "X"
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.TextColor3 = TextColor
-CloseButton.TextSize = 20
+-- Minimizar
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 25, 0, 25)
+minimizeBtn.Position = UDim2.new(1, -60, 0.5, -12)
+minimizeBtn.Text = "-"
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+minimizeBtn.Parent = header
 
-local CloseCorner = Instance.new("UICorner", CloseButton)
-CloseCorner.CornerRadius = UDim.new(1, 0)
+-- Fechar
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 25, 0, 25)
+closeBtn.Position = UDim2.new(1, -30, 0.5, -12)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+closeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+closeBtn.Parent = header
 
--- Aba lateral
-local TabBar = Instance.new("Frame")
-TabBar.Parent = MainFrame
-TabBar.BackgroundColor3 = MainColor
-TabBar.BorderColor3 = AccentColor
-TabBar.BorderSizePixel = 2
-TabBar.Position = UDim2.new(0, 0, 0, 40)
-TabBar.Size = UDim2.new(0, 130, 1, -40)
+-- Drag da janela
+header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragStart = input.Position
+        startPos = mainFrame.Position
+        dragging = true
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
 
-local TabCorner = Instance.new("UICorner", TabBar)
-TabCorner.CornerRadius = UDim.new(0, 10)
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        shadow.Position = mainFrame.Position + UDim2.new(0, 5, 0, 5)
+    end
+end)
 
--- Área de conteúdo
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Parent = MainFrame
-ContentFrame.BackgroundColor3 = BackgroundColor
-ContentFrame.BorderColor3 = AccentColor
-ContentFrame.BorderSizePixel = 2
-ContentFrame.Position = UDim2.new(0, 135, 0, 45)
-ContentFrame.Size = UDim2.new(1, -140, 1, -50)
+-- Sidebar (Abas)
+local sidebar = Instance.new("Frame")
+sidebar.Size = UDim2.new(0, 120, 1, -35)
+sidebar.Position = UDim2.new(0, 0, 0, 35)
+sidebar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+sidebar.Parent = mainFrame
 
-local ContentCorner = Instance.new("UICorner", ContentFrame)
-ContentCorner.CornerRadius = UDim.new(0, 10)
-
-------------------------------------
--- TABS ---------------------------
-------------------------------------
-local Tabs = {}
-local Contents = {}
-local TabNames = {"Autofarm", "PVP", "Teleport", "Misc", "Config"}
-
-for i, name in ipairs(TabNames) do
-    -- Botão de aba
-    local TabButton = Instance.new("TextButton")
-    TabButton.Parent = TabBar
-    TabButton.BackgroundColor3 = MainColor
-    TabButton.BorderColor3 = AccentColor
-    TabButton.BorderSizePixel = 2
-    TabButton.Position = UDim2.new(0, 10, 0, (i - 1) * 50 + 10)
-    TabButton.Size = UDim2.new(0, 110, 0, 40)
-    TabButton.Text = name
-    TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextColor3 = TextColor
-    TabButton.TextSize = 16
-
-    local TabUICorner = Instance.new("UICorner", TabButton)
-    TabUICorner.CornerRadius = UDim.new(0, 8)
-
-    -- Conteúdo da aba
-    local Content = Instance.new("Frame")
-    Content.Parent = ContentFrame
-    Content.BackgroundTransparency = 1
-    Content.Size = UDim2.new(1, 0, 1, 0)
-    Content.Visible = i == 1
-
-    Tabs[name] = TabButton
-    Contents[name] = Content
-
-    -- Texto placeholder dentro da aba
-    local Label = Instance.new("TextLabel")
-    Label.Parent = Content
-    Label.BackgroundTransparency = 1
-    Label.Size = UDim2.new(1, 0, 0, 40)
-    Label.Position = UDim2.new(0, 0, 0, 0)
-    Label.Text = "Conteúdo da aba: " .. name
-    Label.Font = Enum.Font.Gotham
-    Label.TextColor3 = TextColor
-    Label.TextSize = 18
-
-    -- Clique da aba
-    TabButton.MouseButton1Click:Connect(function()
-        for _, v in pairs(Contents) do v.Visible = false end
-        Content.Visible = true
-    end)
+local tabs = {"Farm", "PvP", "Teleport", "Misc", "Config"}
+for i, name in ipairs(tabs) do
+    local tabBtn = Instance.new("TextButton")
+    tabBtn.Size = UDim2.new(1, 0, 0, 35)
+    tabBtn.Position = UDim2.new(0, 0, 0, (i - 1) * 36)
+    tabBtn.Text = name
+    tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tabBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    tabBtn.Font = Enum.Font.Gotham
+    tabBtn.TextSize = 14
+    tabBtn.Parent = sidebar
 end
 
-------------------------------------
--- FUNÇÕES DE BOTÕES ---------------
-------------------------------------
-FloatButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = true
+-- Abrir/fechar janela com botão flutuante
+floatButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+    shadow.Visible = mainFrame.Visible
 end)
 
-CloseButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
+-- Minimizar e fechar
+minimizeBtn.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    shadow.Visible = false
 end)
 
-MinButton.MouseButton1Click:Connect(function()
-    ContentFrame.Visible = not ContentFrame.Visible
-    TabBar.Visible = not TabBar.Visible
+closeBtn.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    shadow.Visible = false
 end)
-
-------------------------------------
--- DRAG (mover botão e janela) -----
-------------------------------------
-local UIS = game:GetService("UserInputService")
-local dragging = false
-local dragInput, dragStart, startPos
-
-function dragify(Frame)
-    Frame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = Frame.Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-
-    Frame.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-
-    UIS.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - dragStart
-            Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
-end
-
--- Aplicar drag no botão e na janela
-dragify(FloatButton)
-dragify(MainFrame)
-------------------------------------
-
